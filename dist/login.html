@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bintu Stream | Bintunet</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.cdnfonts.com/css/runtoe" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<style>
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: #333;
+  }
+  .container {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;
+  }
+  h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #4f46e5;
+    font-family: 'Runtoe', cursive;
+    font-size: 2rem;
+  }
+  #form-title {
+    text-align: center;
+    color: #4f46e5;
+    margin: 0.5rem 0 1rem 0;
+    font-weight: 600;
+  }
+  input {
+    width: 100%;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+  }
+  button {
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    background: #4f46e5;
+    border: none;
+    border-radius: 0.5rem;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .toggle {
+    text-align: center;
+    margin-top: 1rem;
+    color: #4f46e5;
+    cursor: pointer;
+  }
+  .message {
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: red;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Bintu Stream</h2>
+  <div id="form-title">Sign In</div>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button id="submit-btn">Login</button>
+  <div class="toggle" id="toggle-form">Don't have an account? Sign Up</div>
+  <div class="message" id="message"></div>
+</div>
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const supabaseUrl = 'https://aycoipidfgpomsovgmsj.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5Y29pcGlkZmdwb21zb3ZnbXNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5MTE0MTMsImV4cCI6MjA2NzQ4NzQxM30._iPR5sp3v9ut24D5k-Vf8YIuO2W3yKWhWlRB0uEGOGg';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+const emailEl = document.getElementById('email');
+const passwordEl = document.getElementById('password');
+const submitBtn = document.getElementById('submit-btn');
+const toggleForm = document.getElementById('toggle-form');
+const formTitle = document.getElementById('form-title');
+const messageEl = document.getElementById('message');
+
+let isLogin = true;
+
+toggleForm.addEventListener('click', () => {
+  isLogin = !isLogin;
+  formTitle.textContent = isLogin ? 'Sign In' : 'Sign Up';
+  submitBtn.textContent = isLogin ? 'Login' : 'Register';
+  toggleForm.textContent = isLogin ? "Don't have an account? Sign Up" : "Already have an account? Sign In";
+  messageEl.textContent = '';
+});
+
+submitBtn.addEventListener('click', async () => {
+  const email = emailEl.value.trim();
+  const password = passwordEl.value.trim();
+  if (!email || !password) {
+    messageEl.textContent = 'Please enter email and password.';
+    return;
+  }
+
+  messageEl.textContent = 'Processing...';
+  messageEl.style.color = '#4f46e5';
+
+  if (isLogin) {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      messageEl.textContent = error.message;
+      messageEl.style.color = 'red';
+    } else {
+      messageEl.textContent = 'Login successful!';
+      messageEl.style.color = 'green';
+      setTimeout(() => window.location.href = 'account.html', 1500);
+    }
+  } else {
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      messageEl.textContent = error.message;
+      messageEl.style.color = 'red';
+    } else {
+      messageEl.textContent = 'Signup successful! Check your email.';
+      messageEl.style.color = 'green';
+    }
+  }
+});
+</script>
+</body>
+</html>
