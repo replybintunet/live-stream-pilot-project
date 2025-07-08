@@ -1,73 +1,204 @@
-# Welcome to your Lovable project
+# YouTube Live Streaming Web App
 
-## Project info
+A complete web application for streaming MP4 videos to YouTube Live with a beautiful, mobile-friendly interface.
 
-**URL**: https://lovable.dev/projects/841259d6-bd51-4bcc-afeb-2f63850e3a80
+## Features
 
-## How can I edit this code?
+✅ **Clean Mobile-Friendly Interface** - React + Tailwind CSS responsive design
+✅ **YouTube Stream Key Input** - Secure password field for stream keys  
+✅ **MP4 File Upload** - Drag & drop or click to upload videos
+✅ **Loop Video Option** - Checkbox to continuously loop the video
+✅ **One-Click Streaming** - Start live stream with beautiful animations
+✅ **Success Screen** - Confirmation that stream has started
+✅ **Background Processing** - Streams continue even after closing the app
+✅ **Auto Cleanup** - Uploaded files are automatically deleted after streaming
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+**Frontend:**
+- React 18 + TypeScript
+- Tailwind CSS + shadcn/ui components
+- Responsive design with mobile-first approach
+- Beautiful animations and transitions
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/841259d6-bd51-4bcc-afeb-2f63850e3a80) and start prompting.
+**Backend:**
+- Node.js + Express
+- Multer for file uploads
+- FFmpeg for video streaming
+- PM2 for process management
 
-Changes made via Lovable will be committed automatically to this repo.
+## Quick Start (Development)
 
-**Use your preferred IDE**
+1. **Install dependencies:**
+   ```bash
+   npm install
+   cd backend && npm install
+   ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+2. **Start development servers:**
+   ```bash
+   # Frontend (terminal 1)
+   npm run dev
+   
+   # Backend (terminal 2)
+   cd backend && npm run dev
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+3. **Visit:** `http://localhost:8080`
 
-Follow these steps:
+## Production Deployment on VPS
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Prerequisites
+- VPS with Ubuntu/Debian
+- Root access
+- Minimum 2GB RAM, 1GB free disk space
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Automated Deployment
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. **Upload files to your VPS:**
+   ```bash
+   # On your local machine, create deployment package
+   npm run build
+   
+   # Upload to VPS at /opt/youtube-streaming/
+   scp -r . root@34.127.16.135:/opt/youtube-streaming/
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+2. **Run deployment script on VPS:**
+   ```bash
+   ssh root@34.127.16.135
+   cd /opt/youtube-streaming
+   chmod +x deploy.sh
+   ./deploy.sh
+   ```
+
+### Manual Deployment Steps
+
+1. **Install dependencies:**
+   ```bash
+   # Update system
+   apt update && apt upgrade -y
+   
+   # Install Node.js 18
+   curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+   apt-get install -y nodejs
+   
+   # Install FFmpeg
+   apt-get install -y ffmpeg
+   
+   # Install PM2
+   npm install -g pm2
+   ```
+
+2. **Setup application:**
+   ```bash
+   mkdir -p /opt/youtube-streaming
+   cd /opt/youtube-streaming
+   
+   # Copy your built files here
+   # Install backend dependencies
+   cd backend && npm install --production
+   ```
+
+3. **Create systemd service:**
+   ```bash
+   # Copy the systemd service file from deploy.sh
+   systemctl daemon-reload
+   systemctl enable youtube-streaming
+   systemctl start youtube-streaming
+   ```
+
+## Usage
+
+1. **Get YouTube Stream Key:**
+   - Go to YouTube Studio
+   - Select "Go Live" 
+   - Copy your stream key
+
+2. **Upload Video:**
+   - Choose an MP4 file (max 2GB)
+   - Optionally enable "Loop Video"
+
+3. **Start Streaming:**
+   - Enter your stream key
+   - Click "Start Live Stream"
+   - Your video will begin streaming to YouTube Live
+
+## Service Management
+
+```bash
+# Start the service
+systemctl start youtube-streaming
+
+# Stop the service  
+systemctl stop youtube-streaming
+
+# Restart the service
+systemctl restart youtube-streaming
+
+# View service status
+systemctl status youtube-streaming
+
+# View application logs
+pm2 logs youtube-streaming
+
+# Monitor processes
+pm2 monit
 ```
 
-**Edit a file directly in GitHub**
+## API Endpoints
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- `POST /api/start-stream` - Start a new stream
+- `GET /api/streams` - List active streams  
+- `POST /api/stop-stream/:id` - Stop a specific stream
 
-**Use GitHub Codespaces**
+## Configuration
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+The app runs on port 80 by default. To change:
 
-## What technologies are used for this project?
+1. Edit `ecosystem.config.js`
+2. Update the PORT environment variable
+3. Restart the service
 
-This project is built with:
+## Troubleshooting
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Common Issues
 
-## How can I deploy this project?
+**Stream won't start:**
+- Verify YouTube stream key is correct
+- Check if FFmpeg is installed: `ffmpeg -version`
+- Check server logs: `pm2 logs youtube-streaming`
 
-Simply open [Lovable](https://lovable.dev/projects/841259d6-bd51-4bcc-afeb-2f63850e3a80) and click on Share -> Publish.
+**File upload fails:**
+- Ensure file is MP4 format
+- Check file size is under 2GB
+- Verify disk space: `df -h`
 
-## Can I connect a custom domain to my Lovable project?
+**Service won't start:**
+- Check systemd status: `systemctl status youtube-streaming`
+- Verify Node.js is installed: `node --version`
+- Check port 80 isn't in use: `netstat -tulpn | grep :80`
 
-Yes, you can!
+### Log Files
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- Application logs: `pm2 logs youtube-streaming`
+- System logs: `journalctl -u youtube-streaming -f`
+- Error logs: `/var/log/youtube-streaming-error.log`
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Security Notes
+
+- Stream keys are handled securely (password input)
+- Uploaded files are automatically cleaned up
+- No persistent storage of sensitive data
+- HTTPS recommended for production (add SSL certificate)
+
+## Support
+
+For issues or questions:
+1. Check the troubleshooting section above
+2. Review log files for error details
+3. Ensure all prerequisites are installed correctly
+
+## License
+
+MIT License - feel free to modify and distribute.
