@@ -11,7 +11,6 @@ const port = process.env.PORT || 3001;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../dist')));
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -108,7 +107,6 @@ app.post('/api/start-stream', upload.single('video'), async (req, res) => {
       // Clean up
       const streamInfo = activeStreams.get(streamId);
       if (streamInfo) {
-        // Delete the uploaded video file
         fs.remove(streamInfo.videoPath).catch(err => 
           console.error('Error deleting video file:', err)
         );
@@ -118,7 +116,6 @@ app.post('/api/start-stream', upload.single('video'), async (req, res) => {
 
     ffmpeg.on('error', (error) => {
       console.error('FFmpeg error:', error);
-      // Clean up on error
       const streamInfo = activeStreams.get(streamId);
       if (streamInfo) {
         fs.remove(streamInfo.videoPath).catch(err => 
@@ -137,7 +134,6 @@ app.post('/api/start-stream', upload.single('video'), async (req, res) => {
   } catch (error) {
     console.error('Error starting stream:', error);
     
-    // Clean up uploaded file on error
     if (req.file) {
       fs.remove(req.file.path).catch(err => 
         console.error('Error deleting file:', err)
@@ -168,15 +164,14 @@ app.post('/api/stop-stream/:streamId', (req, res) => {
     return res.status(404).send('Stream not found');
   }
   
-  // Kill the ffmpeg process
   streamInfo.process.kill('SIGTERM');
   
   res.json({ success: true, message: 'Stream stopped' });
 });
 
-// Serve frontend for all other routes
+// Fallback for all other routes
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../dist/index.html'));
+  res.send('Backend service is running. Use /api endpoints.');
 });
 
 // Error handling middleware
