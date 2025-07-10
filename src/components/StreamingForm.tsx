@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Upload, Play, Loader2, Youtube } from 'lucide-react';
+import { Upload, Play, Loader2, Video } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface StreamingFormProps {
@@ -67,14 +67,16 @@ export const StreamingForm = ({ onStreamStart, isStreaming }: StreamingFormProps
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full max-w-md mx-auto shadow-xl border-0 bg-card/95 backdrop-blur">
       <CardHeader className="text-center">
         <div className="flex items-center justify-center gap-2 mb-2">
-          <Youtube className="h-8 w-8 text-primary" />
-          <CardTitle className="text-2xl">YouTube Live Stream</CardTitle>
+          <Video className="h-8 w-8 text-primary" />
+          <CardTitle className="text-2xl bg-gradient-to-r from-primary to-primary-hover bg-clip-text text-transparent">
+            BintuBot Stream
+          </CardTitle>
         </div>
         <CardDescription>
-          Upload your video and start streaming to YouTube Live
+          Upload your video and start streaming to YouTube with BintuBot
         </CardDescription>
       </CardHeader>
       
