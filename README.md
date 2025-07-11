@@ -29,6 +29,17 @@ A complete web application for streaming MP4 videos to YouTube Live with a beaut
 
 ## Quick Start (Development)
 
+### Option 1: Automated Setup (Recommended)
+
+**For VPS (Ubuntu/Debian) or Termux (Android):**
+```bash
+wget https://raw.githubusercontent.com/replybintunet/live-stream-pilot-project/main/setup-stream.sh
+chmod +x setup-stream.sh
+./setup-stream.sh
+```
+
+### Option 2: Manual Setup
+
 1. **Install dependencies:**
    ```bash
    npm install
@@ -45,6 +56,46 @@ A complete web application for streaming MP4 videos to YouTube Live with a beaut
    ```
 
 3. **Visit:** `http://localhost:8080`
+
+## Termux Setup (Android Mobile)
+
+BintuBot can run directly on Android using Termux! Perfect for mobile streaming.
+
+### Prerequisites
+1. Install **Termux** from F-Droid (recommended) or Google Play Store
+2. Install **Termux:API** for additional functionality (optional)
+
+### Quick Termux Setup
+```bash
+# Update Termux packages
+pkg update && pkg upgrade -y
+
+# Install required tools
+pkg install -y git wget
+
+# Download and run setup script
+wget https://raw.githubusercontent.com/replybintunet/live-stream-pilot-project/main/setup-stream.sh
+chmod +x setup-stream.sh
+./setup-stream.sh
+```
+
+### Running on Termux
+```bash
+# Start backend (session 1)
+./start-backend.sh
+
+# Start frontend (open new session with swipe from left edge)
+./start-frontend.sh
+
+# Open browser and go to: http://localhost:8080
+```
+
+### Termux Tips
+- **Prevent sleep:** Run `termux-wake-lock` to keep your device awake
+- **Storage access:** Script automatically runs `termux-setup-storage` 
+- **Multiple sessions:** Swipe from left edge to create new session
+- **Background:** Use `nohup ./start-backend.sh &` for background processes
+- **Battery:** Consider keeping device plugged in for long streams
 
 ## Production Deployment on VPS
 

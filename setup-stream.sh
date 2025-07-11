@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # BintuBot Live Streaming Setup Script
-# Works on both VPS (Ubuntu/Debian) and Termux
+# Optimized for Termux (Android) and VPS (Ubuntu/Debian)
 # Author: BintuBot Team
 
 set -e
@@ -10,14 +10,23 @@ echo "🚀 BintuBot Live Streaming Setup Starting..."
 echo "=============================================="
 
 # Detect environment
-if [[ "$PREFIX" == *"com.termux"* ]]; then
+if [[ "$PREFIX" == *"com.termux"* ]] || [[ -n "$TERMUX_VERSION" ]]; then
     ENVIRONMENT="termux"
     PACKAGE_MANAGER="pkg"
-    echo "📱 Detected: Termux environment"
+    echo "📱 Detected: Termux environment (Android)"
 else
     ENVIRONMENT="vps"
     PACKAGE_MANAGER="apt"
     echo "🖥️  Detected: VPS/Ubuntu/Debian environment"
+fi
+
+# Termux-specific optimizations
+if [ "$ENVIRONMENT" = "termux" ]; then
+    echo "📱 Setting up Termux optimizations..."
+    # Allow termux to access storage
+    termux-setup-storage 2>/dev/null || echo "Storage access already configured"
+    # Prevent CPU throttling
+    termux-wake-lock 2>/dev/null || echo "Wake lock not available, continuing..."
 fi
 
 # Update and upgrade packages
