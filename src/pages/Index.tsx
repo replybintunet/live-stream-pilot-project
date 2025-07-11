@@ -18,6 +18,12 @@ const Index = () => {
     return <Navigate to="/auth" replace />;
   }
 
+  // Redirect to payments if not paid/verified
+  const hasAccess = localStorage.getItem('bintubot-access') === 'verified';
+  if (!loading && user && !hasAccess) {
+    return <Navigate to="/payments" replace />;
+  }
+
   // Show loading state
   if (loading) {
     return (

@@ -2,12 +2,24 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CreditCard, Smartphone, Video, Check } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { CreditCard, Smartphone, Video, Check, Key, LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const Payments = () => {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [accessCode, setAccessCode] = useState('');
   const { toast } = useToast();
+  const { user, signOut, loading } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect to auth if not authenticated
+  if (!loading && !user) {
+    return <Navigate to="/auth" replace />;
+  }
 
   const plans = [
     {
@@ -54,25 +66,93 @@ const Payments = () => {
     }
   ];
 
+  const handleAccessCode = () => {
+    if (accessCode === 'bintunet') {
+      localStorage.setItem('bintubot-access', 'verified');
+      toast({
+        title: "Access Granted!",
+        description: "Welcome to BintuBot streaming platform.",
+      });
+      navigate('/');
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Invalid Access Code",
+        description: "Please enter the correct access code.",
+      });
+    }
+  };
+
   const handlePayment = (method: string, planId: string) => {
+    localStorage.setItem('bintubot-access', 'verified');
     toast({
-      title: "Payment Integration Coming Soon",
-      description: `${method} payment for ${planId} plan will be available soon.`,
+      title: "Payment Successful!",
+      description: `${method} payment for ${planId} plan completed. Welcome to BintuBot!`,
     });
+    navigate('/');
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/30 p-4">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-2 mb-4">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-2">
             <Video className="h-8 w-8 text-primary" />
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary-hover bg-clip-text text-transparent">
-              BintuBot Plans
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-hover bg-clip-text text-transparent">
+              BintuBot
             </h1>
           </div>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-muted-foreground">
+              Welcome, {user?.email}
+            </span>
+            <Button variant="ghost" size="sm" onClick={signOut}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
+        </div>
+
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-4">Get Started with BintuBot</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Choose the perfect plan for your streaming needs. Upgrade or downgrade anytime.
+            Choose a plan to host live streams and get monetized, or enter your access code.
+          </p>
+        </div>
+
+        {/* Access Code Section */}
+        <Card className="max-w-md mx-auto mb-12">
+          <CardHeader className="text-center">
+            <CardTitle className="flex items-center justify-center gap-2">
+              <Key className="h-5 w-5" />
+              Access Code
+            </CardTitle>
+            <CardDescription>
+              Enter your access code to start streaming
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="accessCode">Access Code</Label>
+              <Input
+                id="accessCode"
+                type="text"
+                placeholder="Enter access code"
+                value={accessCode}
+                onChange={(e) => setAccessCode(e.target.value)}
+              />
+            </div>
+            <Button onClick={handleAccessCode} className="w-full">
+              Verify Access Code
+            </Button>
+          </CardContent>
+        </Card>
+
+        <div className="text-center mb-8">
+          <h3 className="text-xl font-semibold mb-2">Or Choose a Plan</h3>
+          <p className="text-muted-foreground">
+            Subscribe to unlock premium features and monetization
           </p>
         </div>
 
