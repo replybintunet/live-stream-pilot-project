@@ -55,7 +55,7 @@ npm install -g pm2
 
 # Set up project directory
 PROJECT_DIR="live-stream-pilot-project"
-REPO_URL="https://github.com/yourusername/live-stream-pilot-project.git"
+REPO_URL="https://github.com/replybintunet/live-stream-pilot-project.git"
 
 echo ""
 echo "📁 Setting up project directory..."
